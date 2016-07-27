@@ -1,0 +1,22 @@
+{
+  "name": "react-treeview",
+  "version": "1.0.0",
+  "description": "",
+  "main": "index.js",
+  "scripts": {
+    "build": "browserify -t [ babelify ] ./src/index.jsx -o ./dest/bundle.js",
+    "build-ex1": "browserify -t [ babelify ] ./examples/example1/example.jsx -o ./examples/example1/bundle.js"
+  },
+  "author": "",
+  "license": "ISC",
+  "dependencies": {
+    "react": "^15.2.1",
+    "react-dom": "^15.2.1"
+  },
+  "devDependencies": {
+    "babel-preset-es2015": "^6.9.0",
+    "babel-preset-react": "^6.11.1",
+    "babelify": "^7.3.0",
+    "browserify": "^13.0.1"
+  }
+}
