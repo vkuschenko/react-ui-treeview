@@ -1,3 +1,7 @@
+# Local folders
+dest
+examples
+
 # JetBrains IDE cache
 .idea
 
