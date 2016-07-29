@@ -1,3 +1,6 @@
+# Local folders
+coverage
+
 # JetBrains IDE cache
 .idea
 

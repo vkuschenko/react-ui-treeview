@@ -5,7 +5,8 @@
   "main": "/src/treeview.jsx",
   "scripts": {
     "build": "browserify -t [ babelify ] ./src/index.jsx -o ./dest/bundle.js",
-    "build-examples": "browserify -t [ babelify ] ./examples/example1/example.jsx -o ./examples/example1/bundle.js"
+    "build-examples": "browserify -t [ babelify ] ./examples/example1/example.jsx -o ./examples/example1/bundle.js",
+    "test": "jest --coverage"
   },
   "author": "Victor Kuschenko",
   "license": "MIT",
@@ -24,6 +25,11 @@
     "babelify": "^7.3.0",
     "browserify": "^13.0.1",
     "jest-cli": "^14.0.0",
-    "react-addons-test-utils": "^15.2.1"
+    "react-addons-test-utils": "^15.2.1",
+    "react-dom": "^15.2.1"
+  },
+  "jest": {
+    "automock": false,
+    "unmockedModulePathPatterns": []
   }
 }

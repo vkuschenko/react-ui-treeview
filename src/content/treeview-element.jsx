@@ -12,10 +12,12 @@ var TreeviewElement = React.createClass({
 
   componentWillMount: function () {
     this.setState({
-      canExpand: this.props.node.nodes && this.props.node.nodes.length > 0
+      canExpand: this.props.node.nodes && this.props.node.nodes.length > 0 ? true : false
     });
 
-    this.context.registerNode(this);
+    if(this.context.registerNode){
+      this.context.registerNode(this);
+    }
   },
 
   render: function () {

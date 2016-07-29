@@ -1,6 +1,8 @@
 # Local folders
 dest
 examples
+__tests__
+__tests-data__
 
 # JetBrains IDE cache
 .idea
