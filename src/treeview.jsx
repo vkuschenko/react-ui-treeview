@@ -27,18 +27,42 @@ var Treeview = React.createClass({
   },
 
   getInitialState: function () {
-    return { nodes: [] };
+    return {nodes: []};
   },
-  
+
+  componentWillMount: function () {
+    this.props.nodes = this.verifyNodes(this.props.nodes);
+  },
+
   render: function () {
     return (
       <div className={this.props.styles.treeview}>
-        <TreeviewToolbar styles={this.props.styles} useDefaultButtons={this.props.useDefaultButtons}
-                         handlerCollapseAll={this.handlerCollapseAll} handlerExpandAll={this.handlerExpandAll}
-                         customButtons={this.props.buttons} />
-        <TreeviewContent nodes={this.props.nodes} styles={this.props.styles} />
+        <TreeviewToolbar styles={this.props.styles}
+                         useDefaultButtons={this.props.useDefaultButtons}
+                         customButtons={this.props.buttons}/>
+        <TreeviewContent nodes={this.props.nodes} styles={this.props.styles}/>
       </div>
     );
+  },
+
+  verifyNodes: function(nodes) {
+    var self = this;
+    return nodes.map(function(node){
+      if(node.nodes && node.nodes.length > 0){
+        node.nodes = self.verifyNodes(node.nodes);
+      }
+      return self.setGuidToNode(node);
+    });
+  },
+
+  setGuidToNode: function (node) {
+    if (!node.id) {
+      var s4 = function () {
+        return (((1 + Math.random()) * 0x10000) | 0).toString(16).substring(1);
+      };
+      node.id = (s4() + s4() + "-" + s4() + "-4" + s4().substr(0, 3) + "-" + s4() + "-" + s4() + s4() + s4()).toLowerCase();
+    }
+    return node;
   },
 
   // Context dependant functionality
@@ -49,7 +73,7 @@ var Treeview = React.createClass({
       registerNode: function (node) {
         var nodes = self.state.nodes;
         nodes.push(node);
-        self.setState({ nodes: nodes })
+        self.setState({nodes: nodes})
       },
       nodes: self.state.nodes
     };

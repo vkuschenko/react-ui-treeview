@@ -12,6 +12,7 @@ var TreeviewElement = React.createClass({
 
   componentWillMount: function () {
     this.setState({
+      id: this.props.node.id,
       canExpand: this.props.node.nodes && this.props.node.nodes.length > 0 ? true : false
     });
 
@@ -39,8 +40,8 @@ var TreeviewElement = React.createClass({
 
       return (
         <ul className={className}>
-          {this.props.node.nodes.map(function (node, i) {
-            return <TreeviewElement key={i} node={node} styles={this.props.styles} />;
+          {this.props.node.nodes.map(function (node) {
+            return <TreeviewElement key={node.id} node={node} styles={this.props.styles} />;
           }, this)}
         </ul>
       );

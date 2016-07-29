@@ -20474,8 +20474,8 @@ var TreeviewContent = React.createClass({
       React.createElement(
         "ul",
         { className: this.props.styles.group + " " + this.props.styles.rootGroup },
-        this.props.nodes.map(function (node, i) {
-          return React.createElement(TreeviewElement, { key: i, node: node, styles: this.props.styles });
+        this.props.nodes.map(function (node) {
+          return React.createElement(TreeviewElement, { key: node.id, node: node, styles: this.props.styles });
         }, this)
       )
     );
@@ -20502,10 +20502,13 @@ var TreeviewElement = React.createClass({
 
   componentWillMount: function () {
     this.setState({
-      canExpand: this.props.node.nodes && this.props.node.nodes.length > 0
+      id: this.props.node.id,
+      canExpand: this.props.node.nodes && this.props.node.nodes.length > 0 ? true : false
     });
 
-    this.context.registerNode(this);
+    if (this.context.registerNode) {
+      this.context.registerNode(this);
+    }
   },
 
   render: function () {
@@ -20532,8 +20535,8 @@ var TreeviewElement = React.createClass({
       return React.createElement(
         "ul",
         { className: className },
-        this.props.node.nodes.map(function (node, i) {
-          return React.createElement(TreeviewElement, { key: i, node: node, styles: this.props.styles });
+        this.props.node.nodes.map(function (node) {
+          return React.createElement(TreeviewElement, { key: node.id, node: node, styles: this.props.styles });
         }, this)
       );
     }
@@ -20677,15 +20680,39 @@ var Treeview = React.createClass({
     return { nodes: [] };
   },
 
+  componentWillMount: function () {
+    this.props.nodes = this.verifyNodes(this.props.nodes);
+  },
+
   render: function () {
     return React.createElement(
       "div",
       { className: this.props.styles.treeview },
-      React.createElement(TreeviewToolbar, { styles: this.props.styles, useDefaultButtons: this.props.useDefaultButtons,
-        handlerCollapseAll: this.handlerCollapseAll, handlerExpandAll: this.handlerExpandAll,
+      React.createElement(TreeviewToolbar, { styles: this.props.styles,
+        useDefaultButtons: this.props.useDefaultButtons,
         customButtons: this.props.buttons }),
       React.createElement(TreeviewContent, { nodes: this.props.nodes, styles: this.props.styles })
     );
+  },
+
+  verifyNodes: function (nodes) {
+    var self = this;
+    return nodes.map(function (node) {
+      if (node.nodes && node.nodes.length > 0) {
+        node.nodes = self.verifyNodes(node.nodes);
+      }
+      return self.setGuidToNode(node);
+    });
+  },
+
+  setGuidToNode: function (node) {
+    if (!node.id) {
+      var s4 = function () {
+        return ((1 + Math.random()) * 0x10000 | 0).toString(16).substring(1);
+      };
+      node.id = (s4() + s4() + "-" + s4() + "-4" + s4().substr(0, 3) + "-" + s4() + "-" + s4() + s4() + s4()).toLowerCase();
+    }
+    return node;
   },
 
   // Context dependant functionality

@@ -4,20 +4,25 @@
   "description": "Simple implementation of treeview component that follow react way",
   "main": "/src/treeview.jsx",
   "scripts": {
-    "build": "browserify -t [ babelify ] ./src/index.jsx -o ./dest/bundle.js",
     "build-examples": "browserify -t [ babelify ] ./examples/example1/example.jsx -o ./examples/example1/bundle.js",
     "test": "jest --coverage"
   },
   "author": "Victor Kuschenko",
   "license": "MIT",
-  "dependencies": {
-    "react": "^15.2.1"
-  },
   "repository": {
     "type": "git",
     "url": "https://github.com/vkuschenko/react-ui-treeview.git"
   },
   "bugs": "https://github.com/vkuschenko/react-ui-treeview/issues",
+
+  "jest": {
+    "automock": false,
+    "unmockedModulePathPatterns": []
+  },
+
+  "dependencies": {
+    "react": "^15.2.1"
+  },
   "devDependencies": {
     "babel-jest": "^14.0.0",
     "babel-polyfill": "^6.9.1",
@@ -27,9 +32,5 @@
     "jest-cli": "^14.0.0",
     "react-addons-test-utils": "^15.2.1",
     "react-dom": "^15.2.1"
-  },
-  "jest": {
-    "automock": false,
-    "unmockedModulePathPatterns": []
   }
 }
