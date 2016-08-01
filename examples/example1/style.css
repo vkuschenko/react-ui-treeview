@@ -21,6 +21,7 @@
 .treeview-content {
     border: solid 1px #000;
     margin-top: 2px;
+    height: 300px;
 }
 
 .treeview-group {
@@ -29,12 +30,12 @@
     padding-left: 18px;
 }
 
-.root-group {
+.treeview-group-root {
     padding-left: 0px;
     margin-left: 3px;
 }
 
-.collapsed-group {
+.treeview-group-collapsed {
     display: none;
 }
 
@@ -51,6 +52,10 @@
     color: grey;
     margin-left:18px;
     min-height: 18px;
+}
+
+.treeview-element-label-selected {
+    background-color: #0086b3;
 }
 
 .expander {

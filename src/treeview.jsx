@@ -1,6 +1,9 @@
 var React = require("react");
 var TreeviewToolbar = require("./toolbar/treeview-toolbar.jsx");
-var TreeviewContent = require("./content/treeview-content.jsx");
+var TreeviewGroup = require("./content/treeview-group.jsx");
+var TreeviewNode = require("./content/treeview-node.jsx");
+var inputPreprocessor = require("./helpers/input-preprocessor");
+var defaultStyles = require("./helpers/default-styles");
 
 "use strict";
 
@@ -8,20 +11,7 @@ var Treeview = React.createClass({
 
   getDefaultProps: function () {
     return {
-      styles: {
-        treeview: "treeview",
-        treeviewContent: "treeview-content",
-        group: "treeview-group",
-        rootGroup: "root-group",
-        collapsedGroup: "collapsed-group",
-        element: "treeview-element",
-        elementLabel: "treeview-element-label",
-        expander: "expander",
-        expanderCollapsed: "expander-collapsed",
-        expanderOpened: "expander-opened",
-        treeviewToolbar: "treeview-toolbar",
-        treeviewToolbarButton: "treeview-toolbar-button"
-      },
+      styles: defaultStyles,
       useDefaultButtons: true
     };
   },
@@ -31,7 +21,9 @@ var Treeview = React.createClass({
   },
 
   componentWillMount: function () {
-    this.props.nodes = this.verifyNodes(this.props.nodes);
+    this.setState({
+      nodes: inputPreprocessor.verify(this.props.nodes)
+    });
   },
 
   render: function () {
@@ -40,50 +32,41 @@ var Treeview = React.createClass({
         <TreeviewToolbar styles={this.props.styles}
                          useDefaultButtons={this.props.useDefaultButtons}
                          customButtons={this.props.buttons}/>
-        <TreeviewContent nodes={this.props.nodes} styles={this.props.styles}/>
+
+        <div className={this.props.styles.treeviewContent}>
+          <TreeviewGroup styles={this.props.styles} collapsed={false} root={true}>
+            {this.state.nodes.map(function (node) {
+              return <TreeviewNode key={node.id} styles={this.props.styles} node={node} />
+            }, this)}
+          </TreeviewGroup>
+        </div>
       </div>
     );
   },
 
-  verifyNodes: function(nodes) {
-    var self = this;
-    return nodes.map(function(node){
-      if(node.nodes && node.nodes.length > 0){
-        node.nodes = self.verifyNodes(node.nodes);
-      }
-      return self.setGuidToNode(node);
-    });
-  },
+  // Context dependent functionality
 
-  setGuidToNode: function (node) {
-    if (!node.id) {
-      var s4 = function () {
-        return (((1 + Math.random()) * 0x10000) | 0).toString(16).substring(1);
-      };
-      node.id = (s4() + s4() + "-" + s4() + "-4" + s4().substr(0, 3) + "-" + s4() + "-" + s4() + s4() + s4()).toLowerCase();
-    }
-    return node;
-  },
-
-  // Context dependant functionality
-
-  getChildContext: function () {
-    var self = this;
+  getChildContext() {
     return {
-      registerNode: function (node) {
-        var nodes = self.state.nodes;
-        nodes.push(node);
-        self.setState({nodes: nodes})
-      },
-      nodes: self.state.nodes
+      getTreeviewNodes: getTreeviewNodes.bind(this),
+      setTreeviewNodes: setTreeviewNodes.bind(this)
     };
   }
 
 });
 
 Treeview.childContextTypes = {
-  registerNode: React.PropTypes.func,
-  nodes: React.PropTypes.array
+  getTreeviewNodes: React.PropTypes.func,
+  setTreeviewNodes: React.PropTypes.func
 };
 
 module.exports = Treeview;
+
+
+function getTreeviewNodes() {
+  return this.state.nodes;
+}
+
+function setTreeviewNodes(nodes) {
+  this.setState({nodes: nodes});
+}

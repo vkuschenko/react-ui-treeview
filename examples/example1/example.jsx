@@ -11,10 +11,10 @@ var nodes = [
         type: "database",
         name: "mysql1.localhost",
         nodes: [
-          {name: "Tables"},
+          {name: "Tables", click: function(){ console.log(this.props.node.id);}},
           {name: "Procedures"},
           {name: "Indexes"},
-          {name: "Views"},
+          {name: "Views", nodes: [{name: "View1"}, {name: "View2"}, {name: "View3"}, {name: "View4"},]},
         ]
       },
       {
@@ -30,6 +30,7 @@ var nodes = [
   {
     type: "list",
     name: "Services",
+    click: function(){ console.log(this.props.node.name);},
     nodes: [
       {name: "Payments", type: "payments"},
       {name: "Orders", type: "orders"},
@@ -43,8 +44,16 @@ var nodes = [
 ];
 
 var buttons = [
-  { value: "Button 1", clickHandler: function () { console.log(this.props.value); } },
-  { value: "Button 2", clickHandler: function () { console.log(this.props.value); } }
+  {
+    value: "Button 1", clickHandler: function () {
+      console.log(this.props.value);
+    }
+  },
+  {
+    value: "Button 2", clickHandler: function () {
+      console.log(this.props.value);
+    }
+  }
 ];
 
 ReactDOM.render(

@@ -21,7 +21,8 @@ var TreeviewToolbarButton = React.createClass({
 });
 
 TreeviewToolbarButton.contextTypes = {
-  nodes: React.PropTypes.array
+  getTreeviewNodes: React.PropTypes.func,
+  setTreeviewNodes: React.PropTypes.func
 };
 
 module.exports = TreeviewToolbarButton;

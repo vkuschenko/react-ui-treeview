@@ -9,7 +9,9 @@ var nodes = [{
   nodes: [{
     type: "database",
     name: "mysql1.localhost",
-    nodes: [{ name: "Tables" }, { name: "Procedures" }, { name: "Indexes" }, { name: "Views" }]
+    nodes: [{ name: "Tables", click: function () {
+        console.log(this.props.node.id);
+      } }, { name: "Procedures" }, { name: "Indexes" }, { name: "Views", nodes: [{ name: "View1" }, { name: "View2" }, { name: "View3" }, { name: "View4" }] }]
   }, {
     type: "database",
     name: "mysql2.localhost"
@@ -20,21 +22,28 @@ var nodes = [{
 }, {
   type: "list",
   name: "Services",
+  click: function () {
+    console.log(this.props.node.name);
+  },
   nodes: [{ name: "Payments", type: "payments" }, { name: "Orders", type: "orders" }, { name: "Search", type: "search" }]
 }, {
   type: "list",
   name: "Balancers"
 }];
 
-var buttons = [{ value: "Button 1", clickHandler: function () {
+var buttons = [{
+  value: "Button 1", clickHandler: function () {
     console.log(this.props.value);
-  } }, { value: "Button 2", clickHandler: function () {
+  }
+}, {
+  value: "Button 2", clickHandler: function () {
     console.log(this.props.value);
-  } }];
+  }
+}];
 
 ReactDOM.render(React.createElement(Treeview, { nodes: nodes, buttons: buttons }), document.getElementById("container"));
 
-},{"../../src/treeview.jsx":177,"react":172,"react-dom":30}],2:[function(require,module,exports){
+},{"../../src/treeview.jsx":180,"react":172,"react-dom":30}],2:[function(require,module,exports){
 (function (process){
 'use strict';
 
@@ -20459,110 +20468,202 @@ module.exports = require('./lib/React');
 },{"./lib/React":56}],173:[function(require,module,exports){
 var React = require("react");
 
-var TreeviewElement = require("./treeview-element.jsx");
-
 "use strict";
 
-var TreeviewContent = React.createClass({
-  displayName: "TreeviewContent",
+var TreeviewGroup = React.createClass({
+  displayName: "TreeviewGroup",
 
 
   render: function () {
+    var groupClass = this.props.styles.group;
+    if (this.props.root) {
+      groupClass += " " + this.props.styles.groupRoot;
+    }
+    if (this.props.collapsed) {
+      groupClass += " " + this.props.styles.groupCollapsed;
+    }
+
     return React.createElement(
-      "div",
-      { className: this.props.styles.treeviewContent },
-      React.createElement(
-        "ul",
-        { className: this.props.styles.group + " " + this.props.styles.rootGroup },
-        this.props.nodes.map(function (node) {
-          return React.createElement(TreeviewElement, { key: node.id, node: node, styles: this.props.styles });
-        }, this)
-      )
+      "ul",
+      { className: groupClass },
+      this.props.children
     );
   }
 
 });
 
-module.exports = TreeviewContent;
+module.exports = TreeviewGroup;
 
-},{"./treeview-element.jsx":174,"react":172}],174:[function(require,module,exports){
+},{"react":172}],174:[function(require,module,exports){
 var React = require("react");
+var TreeviewGroup = require("./treeview-group.jsx");
+var ElementHelper = require("../helpers/element-helper");
 
 "use strict";
 
-var TreeviewElement = React.createClass({
-  displayName: "TreeviewElement",
+var TreeviewNode = React.createClass({
+  displayName: "TreeviewNode",
 
-
-  getInitialState: function () {
-    return {
-      collapsed: false
-    };
-  },
-
-  componentWillMount: function () {
-    this.setState({
-      id: this.props.node.id,
-      canExpand: this.props.node.nodes && this.props.node.nodes.length > 0 ? true : false
-    });
-
-    if (this.context.registerNode) {
-      this.context.registerNode(this);
-    }
-  },
 
   render: function () {
+    var expandable = this.props.node.nodes && this.props.node.nodes.length > 0;
+
     return React.createElement(
       "li",
       { "data-type": this.props.node.type, className: this.props.styles.element },
-      this.drawExpander(),
+      expandable && this.drawExpander(),
       React.createElement(
         "div",
         { className: this.props.styles.elementLabel },
-        this.props.node.name
+        React.createElement(
+          "span",
+          { onClick: this.handlerLabelClick, className: this.props.node.selected && this.props.styles.elementLabelSelected },
+          this.props.node.name
+        )
       ),
-      this.drawGroup()
+      expandable && this.drawGroup()
     );
   },
 
   drawGroup: function () {
-    if (this.state.canExpand) {
-      var className = this.props.styles.group;
-      if (this.state.collapsed) {
-        className += " " + this.props.styles.collapsedGroup;
-      }
-
-      return React.createElement(
-        "ul",
-        { className: className },
-        this.props.node.nodes.map(function (node) {
-          return React.createElement(TreeviewElement, { key: node.id, node: node, styles: this.props.styles });
-        }, this)
-      );
-    }
+    return React.createElement(
+      TreeviewGroup,
+      { styles: this.props.styles, collapsed: this.props.node.collapsed, nodes: this.props.node.nodes },
+      this.props.node.nodes.map(function (node) {
+        return React.createElement(TreeviewNode, { key: node.id, styles: this.props.styles, node: node });
+      }, this)
+    );
   },
 
   drawExpander: function () {
-    if (this.state.canExpand) {
-      var expanderClass = this.props.styles.expander + " ";
-      expanderClass += this.state.collapsed ? this.props.styles.expanderCollapsed : this.props.styles.expanderOpened;
-      return React.createElement("div", { className: expanderClass, onClick: this.handlerExpanderClick });
-    }
+    var expanderClass = this.props.styles.expander + " ";
+    expanderClass += this.props.node.collapsed ? this.props.styles.expanderCollapsed : this.props.styles.expanderOpened;
+
+    return React.createElement("div", { className: expanderClass, onClick: this.handlerExpanderClick });
   },
 
   handlerExpanderClick: function () {
-    this.setState({ collapsed: !this.state.collapsed });
+    var nodes = this.context.getTreeviewNodes();
+    var node = ElementHelper.findElement(nodes, this.props.node.id);
+    if (node) {
+      node.collapsed = !node.collapsed;
+      this.context.setTreeviewNodes(nodes);
+    }
+  },
+
+  handlerLabelClick: function () {
+    var nodes = this.context.getTreeviewNodes();
+    ElementHelper.setToAll(nodes, "selected", false);
+    var node = ElementHelper.findElement(nodes, this.props.node.id);
+    if (node) {
+      node.selected = true;
+      this.context.setTreeviewNodes(nodes);
+      if (this.props.node.click && this.props.node.click instanceof Function) {
+        var clickCallback = this.props.node.click.bind(this);
+        clickCallback();
+      }
+    }
   }
 
 });
 
-TreeviewElement.contextTypes = {
-  registerNode: React.PropTypes.func
+TreeviewNode.contextTypes = {
+  getTreeviewNodes: React.PropTypes.func,
+  setTreeviewNodes: React.PropTypes.func
 };
 
-module.exports = TreeviewElement;
+module.exports = TreeviewNode;
 
-},{"react":172}],175:[function(require,module,exports){
+},{"../helpers/element-helper":176,"./treeview-group.jsx":173,"react":172}],175:[function(require,module,exports){
+"use strict";
+
+module.exports = {
+  treeview: "treeview",
+  treeviewContent: "treeview-content",
+  group: "treeview-group",
+  groupRoot: "treeview-group-root",
+  groupCollapsed: "treeview-group-collapsed",
+  element: "treeview-element",
+  elementLabel: "treeview-element-label",
+  elementLabelSelected: "treeview-element-label-selected",
+  expander: "expander",
+  expanderCollapsed: "expander-collapsed",
+  expanderOpened: "expander-opened",
+  treeviewToolbar: "treeview-toolbar",
+  treeviewToolbarButton: "treeview-toolbar-button"
+};
+
+},{}],176:[function(require,module,exports){
+"use strict";
+
+module.exports = {
+
+  findElement: function (nodes, id) {
+    var node = null;
+    for (var i = 0; i < nodes.length; i++) {
+      if (nodes[i].id === id) {
+        node = nodes[i];
+        break;
+      } else if (nodes[i].nodes && nodes[i].nodes.length > 0) {
+        node = this.findElement(nodes[i].nodes, id);
+        if (node) {
+          break;
+        }
+      }
+    }
+
+    return node;
+  },
+
+  setToAll: function (nodes, property, val) {
+    for (var i = 0; i < nodes.length; i++) {
+      nodes[i][property] = val;
+      if (nodes[i].nodes && nodes[i].nodes.length > 0) {
+        this.setToAll(nodes[i].nodes, property, val);
+      }
+    }
+  }
+
+};
+
+},{}],177:[function(require,module,exports){
+"use strict";
+
+module.exports = {
+
+  verify: function (nodes) {
+    var self = this;
+    return nodes.map(function (node) {
+      if (node.nodes && node.nodes.length > 0) {
+        node.nodes = self.verify(node.nodes);
+      }
+
+      node = self.setCollapsed(node);
+      node = self.setGuid(node);
+      return node;
+    });
+  },
+
+  setCollapsed: function (node) {
+    if (!("collapsed" in node)) {
+      node.collapsed = false;
+    }
+    return node;
+  },
+
+  setGuid: function (node) {
+    if (!node.id) {
+      node.id = (this.guidSection() + this.guidSection() + "-" + this.guidSection() + "-4" + this.guidSection().substr(0, 3) + "-" + this.guidSection() + "-" + this.guidSection() + this.guidSection() + this.guidSection()).toLowerCase();
+    }
+    return node;
+  },
+
+  guidSection: function () {
+    return ((1 + Math.random()) * 0x10000 | 0).toString(16).substring(1);
+  }
+};
+
+},{}],178:[function(require,module,exports){
 var React = require("react");
 
 "use strict";
@@ -20588,14 +20689,16 @@ var TreeviewToolbarButton = React.createClass({
 });
 
 TreeviewToolbarButton.contextTypes = {
-  nodes: React.PropTypes.array
+  getTreeviewNodes: React.PropTypes.func,
+  setTreeviewNodes: React.PropTypes.func
 };
 
 module.exports = TreeviewToolbarButton;
 
-},{"react":172}],176:[function(require,module,exports){
+},{"react":172}],179:[function(require,module,exports){
 var React = require("react");
 var TreeviewToolbarButton = require("./treeview-toolbar-button.jsx");
+var ElementHelper = require("../helpers/element-helper");
 
 "use strict";
 
@@ -20630,25 +20733,26 @@ var TreeviewToolbar = React.createClass({
 });
 
 function handlerCollapseAll() {
-  for (var i = 0; i < this.context.nodes.length; i++) {
-    var node = this.context.nodes[i];
-    node.setState({ collapsed: true });
-  }
+  var nodes = this.context.getTreeviewNodes();
+  ElementHelper.setToAll(nodes, "collapsed", true);
+  this.context.setTreeviewNodes(nodes);
 }
 
 function handlerExpandAll() {
-  for (var i = 0; i < this.context.nodes.length; i++) {
-    var node = this.context.nodes[i];
-    node.setState({ collapsed: false });
-  }
+  var nodes = this.context.getTreeviewNodes();
+  ElementHelper.setToAll(nodes, "collapsed", false);
+  this.context.setTreeviewNodes(nodes);
 }
 
 module.exports = TreeviewToolbar;
 
-},{"./treeview-toolbar-button.jsx":175,"react":172}],177:[function(require,module,exports){
+},{"../helpers/element-helper":176,"./treeview-toolbar-button.jsx":178,"react":172}],180:[function(require,module,exports){
 var React = require("react");
 var TreeviewToolbar = require("./toolbar/treeview-toolbar.jsx");
-var TreeviewContent = require("./content/treeview-content.jsx");
+var TreeviewGroup = require("./content/treeview-group.jsx");
+var TreeviewNode = require("./content/treeview-node.jsx");
+var inputPreprocessor = require("./helpers/input-preprocessor");
+var defaultStyles = require("./helpers/default-styles");
 
 "use strict";
 
@@ -20658,20 +20762,7 @@ var Treeview = React.createClass({
 
   getDefaultProps: function () {
     return {
-      styles: {
-        treeview: "treeview",
-        treeviewContent: "treeview-content",
-        group: "treeview-group",
-        rootGroup: "root-group",
-        collapsedGroup: "collapsed-group",
-        element: "treeview-element",
-        elementLabel: "treeview-element-label",
-        expander: "expander",
-        expanderCollapsed: "expander-collapsed",
-        expanderOpened: "expander-opened",
-        treeviewToolbar: "treeview-toolbar",
-        treeviewToolbarButton: "treeview-toolbar-button"
-      },
+      styles: defaultStyles,
       useDefaultButtons: true
     };
   },
@@ -20681,7 +20772,9 @@ var Treeview = React.createClass({
   },
 
   componentWillMount: function () {
-    this.props.nodes = this.verifyNodes(this.props.nodes);
+    this.setState({
+      nodes: inputPreprocessor.verify(this.props.nodes)
+    });
   },
 
   render: function () {
@@ -20691,51 +20784,44 @@ var Treeview = React.createClass({
       React.createElement(TreeviewToolbar, { styles: this.props.styles,
         useDefaultButtons: this.props.useDefaultButtons,
         customButtons: this.props.buttons }),
-      React.createElement(TreeviewContent, { nodes: this.props.nodes, styles: this.props.styles })
+      React.createElement(
+        "div",
+        { className: this.props.styles.treeviewContent },
+        React.createElement(
+          TreeviewGroup,
+          { styles: this.props.styles, collapsed: false, root: true },
+          this.state.nodes.map(function (node) {
+            return React.createElement(TreeviewNode, { key: node.id, styles: this.props.styles, node: node });
+          }, this)
+        )
+      )
     );
   },
 
-  verifyNodes: function (nodes) {
-    var self = this;
-    return nodes.map(function (node) {
-      if (node.nodes && node.nodes.length > 0) {
-        node.nodes = self.verifyNodes(node.nodes);
-      }
-      return self.setGuidToNode(node);
-    });
-  },
+  // Context dependent functionality
 
-  setGuidToNode: function (node) {
-    if (!node.id) {
-      var s4 = function () {
-        return ((1 + Math.random()) * 0x10000 | 0).toString(16).substring(1);
-      };
-      node.id = (s4() + s4() + "-" + s4() + "-4" + s4().substr(0, 3) + "-" + s4() + "-" + s4() + s4() + s4()).toLowerCase();
-    }
-    return node;
-  },
-
-  // Context dependant functionality
-
-  getChildContext: function () {
-    var self = this;
+  getChildContext() {
     return {
-      registerNode: function (node) {
-        var nodes = self.state.nodes;
-        nodes.push(node);
-        self.setState({ nodes: nodes });
-      },
-      nodes: self.state.nodes
+      getTreeviewNodes: getTreeviewNodes.bind(this),
+      setTreeviewNodes: setTreeviewNodes.bind(this)
     };
   }
 
 });
 
 Treeview.childContextTypes = {
-  registerNode: React.PropTypes.func,
-  nodes: React.PropTypes.array
+  getTreeviewNodes: React.PropTypes.func,
+  setTreeviewNodes: React.PropTypes.func
 };
 
 module.exports = Treeview;
 
-},{"./content/treeview-content.jsx":173,"./toolbar/treeview-toolbar.jsx":176,"react":172}]},{},[1]);
+function getTreeviewNodes() {
+  return this.state.nodes;
+}
+
+function setTreeviewNodes(nodes) {
+  this.setState({ nodes: nodes });
+}
+
+},{"./content/treeview-group.jsx":173,"./content/treeview-node.jsx":174,"./helpers/default-styles":175,"./helpers/input-preprocessor":177,"./toolbar/treeview-toolbar.jsx":179,"react":172}]},{},[1]);

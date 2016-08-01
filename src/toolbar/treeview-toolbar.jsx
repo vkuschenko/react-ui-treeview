@@ -1,5 +1,6 @@
 var React = require("react");
 var TreeviewToolbarButton = require("./treeview-toolbar-button.jsx");
+var ElementHelper = require("../helpers/element-helper");
 
 "use strict";
 
@@ -32,17 +33,15 @@ var TreeviewToolbar = React.createClass({
 });
 
 function handlerCollapseAll() {
-  for (var i = 0; i < this.context.nodes.length; i++) {
-    var node = this.context.nodes[i];
-    node.setState({ collapsed: true });
-  }
+  var nodes = this.context.getTreeviewNodes();
+  ElementHelper.setToAll(nodes, "collapsed", true);
+  this.context.setTreeviewNodes(nodes);
 }
 
 function handlerExpandAll() {
-  for (var i = 0; i < this.context.nodes.length; i++) {
-    var node = this.context.nodes[i];
-    node.setState({ collapsed: false });
-  }
+  var nodes = this.context.getTreeviewNodes();
+  ElementHelper.setToAll(nodes, "collapsed", false);
+  this.context.setTreeviewNodes(nodes);
 }
 
 module.exports = TreeviewToolbar;
