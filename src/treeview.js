@@ -1,7 +1,7 @@
 var React = require("react");
-var TreeviewToolbar = require("./toolbar/treeview-toolbar.jsx");
-var TreeviewGroup = require("./content/treeview-group.jsx");
-var TreeviewNode = require("./content/treeview-node.jsx");
+var TreeviewToolbar = require("./toolbar/treeview-toolbar.js");
+var TreeviewGroup = require("./content/treeview-group.js");
+var TreeviewNode = require("./content/treeview-node.js");
 var inputPreprocessor = require("./helpers/input-preprocessor");
 var defaultStyles = require("./helpers/default-styles");
 

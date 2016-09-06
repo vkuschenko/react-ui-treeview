@@ -2,8 +2,8 @@ var React = require('react');
 var ReactDOM = require('react-dom');
 var TestUtils = require('react-addons-test-utils');
 
-var TreeviewElement = require("../src/content/treeview-element.jsx");
-var testData = require("./../__tests-data__/treeview-element-data.js");
+var TreeviewElement = require("../src/content/treeview-node");
+var testData = require("./../__tests-data__/treeview-element-data");
 
 describe('<TreeviewElement>', function() {
   

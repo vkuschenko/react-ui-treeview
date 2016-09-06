@@ -1,5 +1,5 @@
 var React = require("react");
-var TreeviewGroup = require("./treeview-group.jsx");
+var TreeviewGroup = require("./treeview-group");
 var ElementHelper = require("../helpers/element-helper");
 
 "use strict";

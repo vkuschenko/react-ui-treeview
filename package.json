@@ -4,7 +4,7 @@
   "description": "Simple implementation of treeview component that follow react way",
   "main": "/src/treeview.jsx",
   "scripts": {
-    "build-examples": "browserify -t [ babelify ] ./examples/example1/example.jsx -o ./examples/example1/bundle.js",
+    "build-examples": "browserify -t [ babelify ] ./examples/example1/example.js -o ./examples/example1/bundle.js",
     "test": "jest --coverage"
   },
   "author": "Victor Kuschenko",

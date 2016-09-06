@@ -1,6 +1,6 @@
 var React = require("react");
 var ReactDOM = require("react-dom");
-var Treeview = require("../../src/treeview.jsx");
+var Treeview = require("../../src/treeview");
 
 var nodes = [
   {

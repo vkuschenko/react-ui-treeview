@@ -1,7 +1,7 @@
 (function e(t,n,r){function s(o,u){if(!n[o]){if(!t[o]){var a=typeof require=="function"&&require;if(!u&&a)return a(o,!0);if(i)return i(o,!0);var f=new Error("Cannot find module '"+o+"'");throw f.code="MODULE_NOT_FOUND",f}var l=n[o]={exports:{}};t[o][0].call(l.exports,function(e){var n=t[o][1][e];return s(n?n:e)},l,l.exports,e,t,n,r)}return n[o].exports}var i=typeof require=="function"&&require;for(var o=0;o<r.length;o++)s(r[o]);return s})({1:[function(require,module,exports){
 var React = require("react");
 var ReactDOM = require("react-dom");
-var Treeview = require("../../src/treeview.jsx");
+var Treeview = require("../../src/treeview");
 
 var nodes = [{
   type: "list",
@@ -43,7 +43,7 @@ var buttons = [{
 
 ReactDOM.render(React.createElement(Treeview, { nodes: nodes, buttons: buttons }), document.getElementById("container"));
 
-},{"../../src/treeview.jsx":180,"react":172,"react-dom":30}],2:[function(require,module,exports){
+},{"../../src/treeview":180,"react":172,"react-dom":30}],2:[function(require,module,exports){
 (function (process){
 'use strict';
 
@@ -20496,7 +20496,7 @@ module.exports = TreeviewGroup;
 
 },{"react":172}],174:[function(require,module,exports){
 var React = require("react");
-var TreeviewGroup = require("./treeview-group.jsx");
+var TreeviewGroup = require("./treeview-group");
 var ElementHelper = require("../helpers/element-helper");
 
 "use strict";
@@ -20574,7 +20574,7 @@ TreeviewNode.contextTypes = {
 
 module.exports = TreeviewNode;
 
-},{"../helpers/element-helper":176,"./treeview-group.jsx":173,"react":172}],175:[function(require,module,exports){
+},{"../helpers/element-helper":176,"./treeview-group":173,"react":172}],175:[function(require,module,exports){
 "use strict";
 
 module.exports = {
@@ -20697,7 +20697,7 @@ module.exports = TreeviewToolbarButton;
 
 },{"react":172}],179:[function(require,module,exports){
 var React = require("react");
-var TreeviewToolbarButton = require("./treeview-toolbar-button.jsx");
+var TreeviewToolbarButton = require("./treeview-toolbar-button");
 var ElementHelper = require("../helpers/element-helper");
 
 "use strict";
@@ -20746,11 +20746,11 @@ function handlerExpandAll() {
 
 module.exports = TreeviewToolbar;
 
-},{"../helpers/element-helper":176,"./treeview-toolbar-button.jsx":178,"react":172}],180:[function(require,module,exports){
+},{"../helpers/element-helper":176,"./treeview-toolbar-button":178,"react":172}],180:[function(require,module,exports){
 var React = require("react");
-var TreeviewToolbar = require("./toolbar/treeview-toolbar.jsx");
-var TreeviewGroup = require("./content/treeview-group.jsx");
-var TreeviewNode = require("./content/treeview-node.jsx");
+var TreeviewToolbar = require("./toolbar/treeview-toolbar.js");
+var TreeviewGroup = require("./content/treeview-group.js");
+var TreeviewNode = require("./content/treeview-node.js");
 var inputPreprocessor = require("./helpers/input-preprocessor");
 var defaultStyles = require("./helpers/default-styles");
 
@@ -20824,4 +20824,4 @@ function setTreeviewNodes(nodes) {
   this.setState({ nodes: nodes });
 }
 
-},{"./content/treeview-group.jsx":173,"./content/treeview-node.jsx":174,"./helpers/default-styles":175,"./helpers/input-preprocessor":177,"./toolbar/treeview-toolbar.jsx":179,"react":172}]},{},[1]);
+},{"./content/treeview-group.js":173,"./content/treeview-node.js":174,"./helpers/default-styles":175,"./helpers/input-preprocessor":177,"./toolbar/treeview-toolbar.js":179,"react":172}]},{},[1]);
