@@ -4,12 +4,12 @@
     width: 300px;
 }
 
-.treeview-toolbar {
+.toolbar {
     border: solid 1px #000;
     padding: 1px;
 }
 
-.treeview-toolbar-button {
+.button {
     border-radius: 6px;
     background-color: #e7e7e7;
     color: #000;
@@ -18,43 +18,43 @@
     margin: 2px;
 }
 
-.treeview-content {
+.content {
     border: solid 1px #000;
     margin-top: 2px;
     height: 300px;
 }
 
-.treeview-group {
+.group {
     margin: 0;
     padding: 0;
     padding-left: 18px;
 }
 
-.treeview-group-root {
+.group-root {
     padding-left: 0px;
     margin-left: 3px;
 }
 
-.treeview-group-collapsed {
+.group-collapsed {
     display: none;
 }
 
-.treeview-element {
+.node {
     list-style-type: none;
     zoom: 1;
 }
 
-.treeview-element:after {
+.node:after {
     clear: both;
 }
 
-.treeview-element-label {
+.label {
     color: grey;
     margin-left:18px;
     min-height: 18px;
 }
 
-.treeview-element-label-selected {
+.node-selected {
     background-color: #0086b3;
 }
 
@@ -64,16 +64,16 @@
     float: left;
 }
 
-.expander-collapsed {
+.collapsed {
 }
 
-.expander-collapsed:before {
+.collapsed:before {
     content: '+';
 }
 
-.expander-opened {
+.opened {
 }
 
-.expander-opened:before {
+.opened:before {
     content: '-';
 }

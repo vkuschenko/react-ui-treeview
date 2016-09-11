@@ -6,13 +6,8 @@ var TreeviewToolbarButton = React.createClass({
   
   render: function () {
 
-    var handler;
-    if(this.props.clickHandler){
-      handler = this.props.clickHandler.bind(this);
-    }
-
     return (
-      <button onClick={handler} className={this.props.styles.treeviewToolbarButton}>
+      <button onClick={this.props.clickHandler} className={this.props.styles.treeviewToolbarButton}>
         {this.props.value}
       </button>
     );

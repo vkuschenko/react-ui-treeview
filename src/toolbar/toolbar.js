@@ -1,6 +1,6 @@
 var React = require("react");
-var TreeviewToolbarButton = require("./treeview-toolbar-button");
-var ElementHelper = require("../helpers/element-helper");
+var TreeviewToolbarButton = require("./button");
+var ElementHelper = require("../helper");
 
 "use strict";
 

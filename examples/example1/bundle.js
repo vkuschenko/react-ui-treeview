@@ -43,7 +43,7 @@ var buttons = [{
 
 ReactDOM.render(React.createElement(Treeview, { nodes: nodes, buttons: buttons }), document.getElementById("container"));
 
-},{"../../src/treeview":180,"react":172,"react-dom":30}],2:[function(require,module,exports){
+},{"../../src/treeview":182,"react":172,"react-dom":30}],2:[function(require,module,exports){
 (function (process){
 'use strict';
 
@@ -20467,145 +20467,211 @@ module.exports = require('./lib/React');
 
 },{"./lib/React":56}],173:[function(require,module,exports){
 var React = require("react");
+var Group = require("./group");
+var Node = require("./node");
 
 "use strict";
 
-var TreeviewGroup = React.createClass({
-  displayName: "TreeviewGroup",
+var Content = React.createClass({
+  displayName: "Content",
 
 
   render: function () {
-    var groupClass = this.props.styles.group;
-    if (this.props.root) {
-      groupClass += " " + this.props.styles.groupRoot;
-    }
-    if (this.props.collapsed) {
-      groupClass += " " + this.props.styles.groupCollapsed;
-    }
+    return React.createElement(
+      "div",
+      { className: this.props.styles.content },
+      React.createElement(
+        Group,
+        { styles: this.props.styles, collapsed: false, root: true },
+        this.props.nodes.map(function (node) {
+          return React.createElement(Node, { key: node.id, styles: this.props.styles, node: node });
+        }, this)
+      )
+    );
+  }
+
+});
+
+module.exports = Content;
+
+},{"./group":175,"./node":176,"react":172}],174:[function(require,module,exports){
+var React = require("react");
+
+"use strict";
+
+/**
+ * Props:
+ *  styles      - styles
+ *  id          - node id
+ *  collapsed   - is node collapsed
+ */
+var Expander = React.createClass({
+  displayName: "Expander",
+
+
+  render: function () {
+    var expanderStyles = this.props.styles.expander;
+    var styles = [expanderStyles.expander];
+    styles.push(this.props.collapsed ? expanderStyles.collapsed : expanderStyles.opened);
+
+    return React.createElement("div", { className: styles.join(" "), onClick: this.onClick });
+  },
+
+  onClick: function () {
+    this.context.handlerExpanderClick(this.props.id);
+  }
+
+});
+
+Expander.contextTypes = {
+  handlerExpanderClick: React.PropTypes.func
+};
+
+module.exports = Expander;
+
+},{"react":172}],175:[function(require,module,exports){
+var React = require("react");
+
+"use strict";
+
+/**
+ * Props:
+ *  styles      - styles
+ *  root        - is root node
+ *  collapsed   - is node collapsed
+ */
+var Group = React.createClass({
+  displayName: "Group",
+
+
+  render: function () {
+    var groupStyles = this.props.styles.group;
+    var styles = [groupStyles.group];
+    this.props.root && styles.push(groupStyles.root);
+    this.props.collapsed && styles.push(groupStyles.collapsed);
 
     return React.createElement(
       "ul",
-      { className: groupClass },
+      { className: styles.join(" ") },
       this.props.children
     );
   }
 
 });
 
-module.exports = TreeviewGroup;
+module.exports = Group;
 
-},{"react":172}],174:[function(require,module,exports){
+},{"react":172}],176:[function(require,module,exports){
 var React = require("react");
-var TreeviewGroup = require("./treeview-group");
-var ElementHelper = require("../helpers/element-helper");
+var Group = require("./group");
+var Expander = require("./expander");
 
 "use strict";
 
-var TreeviewNode = React.createClass({
-  displayName: "TreeviewNode",
+/**
+ * Props:
+ *  nodes     -
+ *  styles    -
+ *  node      -
+ *    node.nodes
+ *    node.type
+ *    node.id
+ *    node.collapsed
+ *    node.selected
+ *    node.name
+ */
+var Node = React.createClass({
+  displayName: "Node",
 
 
   render: function () {
     var expandable = this.props.node.nodes && this.props.node.nodes.length > 0;
+    var nodeStyles = this.props.styles.node;
 
     return React.createElement(
       "li",
-      { "data-type": this.props.node.type, className: this.props.styles.element },
-      expandable && this.drawExpander(),
+      { "data-type": this.props.node.type, className: nodeStyles.node },
+      expandable && React.createElement(Expander, { styles: this.props.styles,
+        id: this.props.node.id,
+        collapsed: this.props.node.collapsed }),
       React.createElement(
         "div",
-        { className: this.props.styles.elementLabel },
+        { className: nodeStyles.label },
         React.createElement(
           "span",
-          { onClick: this.handlerLabelClick, className: this.props.node.selected && this.props.styles.elementLabelSelected },
+          { onClick: this.onNodeClick, className: this.props.node.selected ? nodeStyles.selected : "" },
           this.props.node.name
         )
       ),
-      expandable && this.drawGroup()
+      expandable && this.renderGroup()
     );
   },
 
-  drawGroup: function () {
+  renderGroup: function () {
     return React.createElement(
-      TreeviewGroup,
+      Group,
       { styles: this.props.styles, collapsed: this.props.node.collapsed, nodes: this.props.node.nodes },
       this.props.node.nodes.map(function (node) {
-        return React.createElement(TreeviewNode, { key: node.id, styles: this.props.styles, node: node });
+        return React.createElement(Node, { key: node.id, styles: this.props.styles, node: node });
       }, this)
     );
   },
 
-  drawExpander: function () {
-    var expanderClass = this.props.styles.expander + " ";
-    expanderClass += this.props.node.collapsed ? this.props.styles.expanderCollapsed : this.props.styles.expanderOpened;
-
-    return React.createElement("div", { className: expanderClass, onClick: this.handlerExpanderClick });
-  },
-
-  handlerExpanderClick: function () {
-    var nodes = this.context.getTreeviewNodes();
-    var node = ElementHelper.findElement(nodes, this.props.node.id);
-    if (node) {
-      node.collapsed = !node.collapsed;
-      this.context.setTreeviewNodes(nodes);
-    }
-  },
-
-  handlerLabelClick: function () {
-    var nodes = this.context.getTreeviewNodes();
-    ElementHelper.setToAll(nodes, "selected", false);
-    var node = ElementHelper.findElement(nodes, this.props.node.id);
-    if (node) {
-      node.selected = true;
-      this.context.setTreeviewNodes(nodes);
-      if (this.props.node.click && this.props.node.click instanceof Function) {
-        var clickCallback = this.props.node.click.bind(this);
-        clickCallback();
-      }
-    }
+  onNodeClick: function () {
+    this.context.handlerNodeClick(this.props.id, this.props.node.clickHandler.bind(this));
   }
 
 });
 
-TreeviewNode.contextTypes = {
-  getTreeviewNodes: React.PropTypes.func,
-  setTreeviewNodes: React.PropTypes.func
+Node.contextTypes = {
+  handlerNodeClick: React.PropTypes.func
 };
 
-module.exports = TreeviewNode;
+module.exports = Node;
 
-},{"../helpers/element-helper":176,"./treeview-group":173,"react":172}],175:[function(require,module,exports){
+},{"./expander":174,"./group":175,"react":172}],177:[function(require,module,exports){
 "use strict";
 
 module.exports = {
   treeview: "treeview",
-  treeviewContent: "treeview-content",
-  group: "treeview-group",
-  groupRoot: "treeview-group-root",
-  groupCollapsed: "treeview-group-collapsed",
-  element: "treeview-element",
-  elementLabel: "treeview-element-label",
-  elementLabelSelected: "treeview-element-label-selected",
-  expander: "expander",
-  expanderCollapsed: "expander-collapsed",
-  expanderOpened: "expander-opened",
-  treeviewToolbar: "treeview-toolbar",
-  treeviewToolbarButton: "treeview-toolbar-button"
+  content: {
+    content: "content",
+    group: {
+      group: "group",
+      root: "group-root",
+      collapsed: "group-collapsed"
+    },
+    node: {
+      node: "node",
+      label: "label",
+      icon: "icon",
+      selected: "node-selected"
+    },
+    expander: {
+      expander: "expander",
+      collapsed: "collapsed",
+      opened: "opened"
+    }
+  },
+  toolbar: {
+    toolbar: "toolbar",
+    button: "button"
+  }
 };
 
-},{}],176:[function(require,module,exports){
+},{}],178:[function(require,module,exports){
 "use strict";
 
 module.exports = {
 
-  findElement: function (nodes, id) {
+  findNodeById: function (nodes, id) {
     var node = null;
     for (var i = 0; i < nodes.length; i++) {
       if (nodes[i].id === id) {
         node = nodes[i];
         break;
       } else if (nodes[i].nodes && nodes[i].nodes.length > 0) {
-        node = this.findElement(nodes[i].nodes, id);
+        node = this.findNodeById(nodes[i].nodes, id);
         if (node) {
           break;
         }
@@ -20626,7 +20692,7 @@ module.exports = {
 
 };
 
-},{}],177:[function(require,module,exports){
+},{}],179:[function(require,module,exports){
 "use strict";
 
 module.exports = {
@@ -20663,7 +20729,7 @@ module.exports = {
   }
 };
 
-},{}],178:[function(require,module,exports){
+},{}],180:[function(require,module,exports){
 var React = require("react");
 
 "use strict";
@@ -20674,14 +20740,9 @@ var TreeviewToolbarButton = React.createClass({
 
   render: function () {
 
-    var handler;
-    if (this.props.clickHandler) {
-      handler = this.props.clickHandler.bind(this);
-    }
-
     return React.createElement(
       "button",
-      { onClick: handler, className: this.props.styles.treeviewToolbarButton },
+      { onClick: this.props.clickHandler, className: this.props.styles.treeviewToolbarButton },
       this.props.value
     );
   }
@@ -20695,10 +20756,10 @@ TreeviewToolbarButton.contextTypes = {
 
 module.exports = TreeviewToolbarButton;
 
-},{"react":172}],179:[function(require,module,exports){
+},{"react":172}],181:[function(require,module,exports){
 var React = require("react");
-var TreeviewToolbarButton = require("./treeview-toolbar-button");
-var ElementHelper = require("../helpers/element-helper");
+var TreeviewToolbarButton = require("./button");
+var ElementHelper = require("../helper");
 
 "use strict";
 
@@ -20746,13 +20807,13 @@ function handlerExpandAll() {
 
 module.exports = TreeviewToolbar;
 
-},{"../helpers/element-helper":176,"./treeview-toolbar-button":178,"react":172}],180:[function(require,module,exports){
+},{"../helper":178,"./button":180,"react":172}],182:[function(require,module,exports){
 var React = require("react");
-var TreeviewToolbar = require("./toolbar/treeview-toolbar.js");
-var TreeviewGroup = require("./content/treeview-group.js");
-var TreeviewNode = require("./content/treeview-node.js");
+var Toolbar = require("./toolbar/toolbar");
+var Content = require("./content/content");
 var inputPreprocessor = require("./helpers/input-preprocessor");
-var defaultStyles = require("./helpers/default-styles");
+var helper = require("./helper");
+var defaultStyles = require("./default-styles");
 
 "use strict";
 
@@ -20781,47 +20842,66 @@ var Treeview = React.createClass({
     return React.createElement(
       "div",
       { className: this.props.styles.treeview },
-      React.createElement(TreeviewToolbar, { styles: this.props.styles,
+      React.createElement(Toolbar, { styles: this.props.styles,
         useDefaultButtons: this.props.useDefaultButtons,
         customButtons: this.props.buttons }),
-      React.createElement(
-        "div",
-        { className: this.props.styles.treeviewContent },
-        React.createElement(
-          TreeviewGroup,
-          { styles: this.props.styles, collapsed: false, root: true },
-          this.state.nodes.map(function (node) {
-            return React.createElement(TreeviewNode, { key: node.id, styles: this.props.styles, node: node });
-          }, this)
-        )
-      )
+      React.createElement(Content, { styles: this.props.styles.content, nodes: this.state.nodes })
     );
+  },
+
+  // FUNCTIONALITY
+
+  handlerExpanderClick: function (id) {
+    var node = helper.findNodeById(this.state.nodes, id);
+    if (node) {
+      node.collapsed = !node.collapsed;
+      this.setState({ nodes: this.state.nodes });
+    }
+  },
+
+  handlerNodeClick: function (id, customHandler) {
+    helper.setToAll(this.state.nodes, "selected", false);
+    var node = helper.findNodeById(this.state.nodes, id);
+    if (node) {
+      node.selected = true;
+      if (customHandler && customHandler instanceof Function) {
+        customHandler();
+      }
+    }
+  },
+
+  handlerExpandAll: function () {
+    var nodes = this.state.nodes;
+    helper.setToAll(nodes, "collapsed", false);
+    this.setState(nodes);
+  },
+
+  handlerCollapseAll: function () {
+    var nodes = this.state.nodes;
+    helper.setToAll(nodes, "collapsed", true);
+    this.setState(nodes);
   },
 
   // Context dependent functionality
 
   getChildContext() {
     return {
-      getTreeviewNodes: getTreeviewNodes.bind(this),
-      setTreeviewNodes: setTreeviewNodes.bind(this)
+      handlerExpanderClick: this.handlerExpanderClick,
+      handlerNodeClick: this.handlerNodeClick,
+      handlerExpandAll: this.handlerNodeClick,
+      handlerCollapseAll: this.handlerNodeClick
     };
   }
 
 });
 
 Treeview.childContextTypes = {
-  getTreeviewNodes: React.PropTypes.func,
-  setTreeviewNodes: React.PropTypes.func
+  handlerExpanderClick: React.PropTypes.func,
+  handlerNodeClick: React.PropTypes.func,
+  handlerExpandAll: React.PropTypes.func,
+  handlerCollapseAll: React.PropTypes.func
 };
 
 module.exports = Treeview;
 
-function getTreeviewNodes() {
-  return this.state.nodes;
-}
-
-function setTreeviewNodes(nodes) {
-  this.setState({ nodes: nodes });
-}
-
-},{"./content/treeview-group.js":173,"./content/treeview-node.js":174,"./helpers/default-styles":175,"./helpers/input-preprocessor":177,"./toolbar/treeview-toolbar.js":179,"react":172}]},{},[1]);
+},{"./content/content":173,"./default-styles":177,"./helper":178,"./helpers/input-preprocessor":179,"./toolbar/toolbar":181,"react":172}]},{},[1]);

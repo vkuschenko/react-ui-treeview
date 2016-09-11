@@ -1,9 +1,9 @@
 var React = require("react");
-var TreeviewToolbar = require("./toolbar/treeview-toolbar.js");
-var TreeviewGroup = require("./content/treeview-group.js");
-var TreeviewNode = require("./content/treeview-node.js");
+var Toolbar = require("./toolbar/toolbar");
+var Content = require("./content/content");
 var inputPreprocessor = require("./helpers/input-preprocessor");
-var defaultStyles = require("./helpers/default-styles");
+var helper = require("./helper");
+var defaultStyles = require("./default-styles");
 
 "use strict";
 
@@ -29,44 +29,65 @@ var Treeview = React.createClass({
   render: function () {
     return (
       <div className={this.props.styles.treeview}>
-        <TreeviewToolbar styles={this.props.styles}
-                         useDefaultButtons={this.props.useDefaultButtons}
-                         customButtons={this.props.buttons}/>
-
-        <div className={this.props.styles.treeviewContent}>
-          <TreeviewGroup styles={this.props.styles} collapsed={false} root={true}>
-            {this.state.nodes.map(function (node) {
-              return <TreeviewNode key={node.id} styles={this.props.styles} node={node} />
-            }, this)}
-          </TreeviewGroup>
-        </div>
+        <Toolbar styles={this.props.styles}
+                 useDefaultButtons={this.props.useDefaultButtons}
+                 customButtons={this.props.buttons}/>
+        <Content styles={this.props.styles.content} nodes={this.state.nodes}/>
       </div>
     );
+  },
+
+  // FUNCTIONALITY
+
+  handlerExpanderClick: function (id) {
+    var node = helper.findNodeById(this.state.nodes, id);
+    if (node) {
+      node.collapsed = !node.collapsed;
+      this.setState({nodes: this.state.nodes});
+    }
+  },
+
+  handlerNodeClick: function (id, customHandler) {
+    helper.setToAll(this.state.nodes, "selected", false);
+    var node = helper.findNodeById(this.state.nodes, id);
+    if (node) {
+      node.selected = true;
+      if (customHandler && customHandler instanceof Function) {
+        customHandler();
+      }
+    }
+  },
+
+  handlerExpandAll: function () {
+    var nodes = this.state.nodes;
+    helper.setToAll(nodes, "collapsed", false);
+    this.setState(nodes);
+  },
+
+  handlerCollapseAll: function () {
+    var nodes = this.state.nodes;
+    helper.setToAll(nodes, "collapsed", true);
+    this.setState(nodes);
   },
 
   // Context dependent functionality
 
   getChildContext() {
     return {
-      getTreeviewNodes: getTreeviewNodes.bind(this),
-      setTreeviewNodes: setTreeviewNodes.bind(this)
+      handlerExpanderClick: this.handlerExpanderClick,
+      handlerNodeClick: this.handlerNodeClick,
+      handlerExpandAll: this.handlerNodeClick,
+      handlerCollapseAll: this.handlerNodeClick
     };
   }
 
 });
 
 Treeview.childContextTypes = {
-  getTreeviewNodes: React.PropTypes.func,
-  setTreeviewNodes: React.PropTypes.func
+  handlerExpanderClick: React.PropTypes.func,
+  handlerNodeClick: React.PropTypes.func,
+  handlerExpandAll: React.PropTypes.func,
+  handlerCollapseAll: React.PropTypes.func,
 };
 
 module.exports = Treeview;
-
-
-function getTreeviewNodes() {
-  return this.state.nodes;
-}
-
-function setTreeviewNodes(nodes) {
-  this.setState({nodes: nodes});
-}
