@@ -2,22 +2,20 @@ var React = require("react");
 
 "use strict";
 
-var TreeviewToolbarButton = React.createClass({
+var Button = React.createClass({
   
   render: function () {
-
     return (
-      <button onClick={this.props.clickHandler} className={this.props.styles.treeviewToolbarButton}>
+      <button onClick={this.onClick} className={this.props.styles.button}>
         {this.props.value}
       </button>
     );
+  },
+
+  onClick: function () {
+    this.props.clickHandler.call(this);
   }
 
 });
 
-TreeviewToolbarButton.contextTypes = {
-  getTreeviewNodes: React.PropTypes.func,
-  setTreeviewNodes: React.PropTypes.func
-};
-
-module.exports = TreeviewToolbarButton;
+module.exports = Button;

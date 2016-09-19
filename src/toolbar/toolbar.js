@@ -1,47 +1,50 @@
 var React = require("react");
-var TreeviewToolbarButton = require("./button");
-var ElementHelper = require("../helper");
+var Button = require("./button");
 
 "use strict";
 
-var TreeviewToolbar = React.createClass({
+var Toolbar = React.createClass({
 
   render: function () {
-    var buttons = [];
-    if (this.props.useDefaultButtons) {
-      buttons.push({ value: "Collapse all", styles: this.props.styles, clickHandler: handlerCollapseAll });
-      buttons.push({ value: "Expand all", styles: this.props.styles, clickHandler: handlerExpandAll });
-    }
+    var buttons = this.props.useDefaultButtons ? this.getDefaultButtons() : [];
 
-    if(this.props.customButtons) {
+    if (this.props.customButtons) {
       buttons = buttons.concat(this.props.customButtons);
     }
 
     return (
-      <div className={this.props.styles.treeviewToolbar}>
+      <div className={this.props.styles.toolbar}>
         {buttons.map(function (button, i) {
-          return <TreeviewToolbarButton
+          return <Button
             key={i}
             value={button.value}
             styles={this.props.styles}
-            clickHandler={button.clickHandler} />
+            clickHandler={button.clickHandler}/>
         }, this)}
       </div>
     );
   },
 
+  getDefaultButtons: function () {
+    return [
+      {value: "Collapse all", styles: this.props.styles, clickHandler: this.onCollapseAll},
+      {value: "Expand all", styles: this.props.styles, clickHandler: this.onExpandAll}
+    ];
+  },
+
+  onExpandAll: function () {
+    this.context.handlerExpandAll();
+  },
+
+  onCollapseAll: function () {
+    this.context.handlerCollapseAll();
+  }
+
 });
 
-function handlerCollapseAll() {
-  var nodes = this.context.getTreeviewNodes();
-  ElementHelper.setToAll(nodes, "collapsed", true);
-  this.context.setTreeviewNodes(nodes);
-}
+Toolbar.contextTypes = {
+  handlerExpandAll: React.PropTypes.func,
+  handlerCollapseAll: React.PropTypes.func
+};
 
-function handlerExpandAll() {
-  var nodes = this.context.getTreeviewNodes();
-  ElementHelper.setToAll(nodes, "collapsed", false);
-  this.context.setTreeviewNodes(nodes);
-}
-
-module.exports = TreeviewToolbar;
+module.exports = Toolbar;

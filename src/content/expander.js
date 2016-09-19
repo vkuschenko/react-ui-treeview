@@ -7,6 +7,7 @@ var React = require("react");
  *  styles      - styles
  *  id          - node id
  *  collapsed   - is node collapsed
+ *  onClick     - `onClick` callback (optional)
  */
 var Expander = React.createClass({
 
@@ -19,7 +20,9 @@ var Expander = React.createClass({
   },
 
   onClick: function () {
-    this.context.handlerExpanderClick(this.props.id)
+    if (this.context.handlerExpanderClick) {
+      this.context.handlerExpanderClick(this.props.id);
+    }
   }
 
 });

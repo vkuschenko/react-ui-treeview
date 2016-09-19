@@ -29,7 +29,7 @@ var Treeview = React.createClass({
   render: function () {
     return (
       <div className={this.props.styles.treeview}>
-        <Toolbar styles={this.props.styles}
+        <Toolbar styles={this.props.styles.toolbar}
                  useDefaultButtons={this.props.useDefaultButtons}
                  customButtons={this.props.buttons}/>
         <Content styles={this.props.styles.content} nodes={this.state.nodes}/>
@@ -76,8 +76,8 @@ var Treeview = React.createClass({
     return {
       handlerExpanderClick: this.handlerExpanderClick,
       handlerNodeClick: this.handlerNodeClick,
-      handlerExpandAll: this.handlerNodeClick,
-      handlerCollapseAll: this.handlerNodeClick
+      handlerExpandAll: this.handlerExpandAll,
+      handlerCollapseAll: this.handlerCollapseAll
     };
   }
 
@@ -87,7 +87,7 @@ Treeview.childContextTypes = {
   handlerExpanderClick: React.PropTypes.func,
   handlerNodeClick: React.PropTypes.func,
   handlerExpandAll: React.PropTypes.func,
-  handlerCollapseAll: React.PropTypes.func,
+  handlerCollapseAll: React.PropTypes.func
 };
 
 module.exports = Treeview;

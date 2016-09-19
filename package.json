@@ -5,7 +5,8 @@
   "main": "/src/treeview.jsx",
   "scripts": {
     "build-examples": "browserify -t [ babelify ] ./examples/example1/example.js -o ./examples/example1/bundle.js",
-    "test": "mocha --compilers js:babel-register"
+    "test": "mocha --compilers js:babel-register",
+    "cover": "istanbul cover node_modules/mocha/bin/_mocha -- --compilers js:babel-register"
   },
   "author": "Victor Kuschenko",
   "license": "MIT",
@@ -25,8 +26,10 @@
     "browserify": "^13.0.1",
     "chai": "^3.5.0",
     "enzyme": "^2.4.1",
+    "istanbul": "^1.1.0-alpha.1",
     "mocha": "^3.0.2",
     "react-addons-test-utils": "^15.3.1",
-    "react-dom": "^15.2.1"
+    "react-dom": "^15.2.1",
+    "sinon": "^1.17.5"
   }
 }
