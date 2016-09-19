@@ -1,4 +1,4 @@
-module.exports = function(grunt) {
+module.exports = function (grunt) {
 
   grunt.initConfig({
     pkg: grunt.file.readJSON('package.json'),
@@ -7,37 +7,20 @@ module.exports = function(grunt) {
       options: {
         force: true
       },
-      prod: ["./dist"],
-      examples: ["./examples/**/bundled_ex.js"],
-      coverage: ["./coverage"]
+      all: ['dist', 'examples/bundle.js', 'coverage']
     },
 
     browserify: {
-
-      prod: {
+      all: {
         options: {
           debug: false,
-          transform: ['babelify'],
-          extensions: ['.js'],
-          external: [
-            'react'
-          ]
-        },
-
-        files: {
-          './dist/bundle.js': ['./src/index.js']
-        }
-      },
-
-      examples: {
-        options: {
-          debug: true,
           transform: ['babelify'],
           extensions: ['.js']
         },
 
         files: {
-          './examples/example1/bundled_ex.js': ['./examples/example1/example.js']
+          'dist/bundle.js': ['src/index.js'],
+          'examples/bundle.js': ['examples/examples.js'],
         }
       }
     },
@@ -59,10 +42,5 @@ module.exports = function(grunt) {
   grunt.loadNpmTasks('grunt-browserify');
   grunt.loadNpmTasks('grunt-contrib-uglify');
 
-
-  grunt.registerTask('prod', ['clean:prod', 'browserify:prod']);
-  grunt.registerTask('examples', ['clean:examples', 'browserify:examples']);
-
-
-  grunt.registerTask('default', ['prod', 'examples', 'uglify']);
+  grunt.registerTask('default', ['clean', 'browserify', 'uglify']);
 };
