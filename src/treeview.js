@@ -72,7 +72,7 @@ var Treeview = React.createClass({
 
   // Context dependent functionality
 
-  getChildContext() {
+  getChildContext: function () {
     return {
       handlerExpanderClick: this.handlerExpanderClick,
       handlerNodeClick: this.handlerNodeClick,

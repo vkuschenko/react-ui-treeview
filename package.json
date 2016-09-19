@@ -2,11 +2,10 @@
   "name": "react-ui-treeview",
   "version": "1.0.0",
   "description": "Simple implementation of treeview component that follow react way",
-  "main": "/src/treeview.jsx",
+  "main": "/src/index.js",
   "scripts": {
-    "build-examples": "browserify -t [ babelify ] ./examples/example1/example.js -o ./examples/example1/bundle.js",
-    "test": "mocha --compilers js:babel-register",
-    "cover": "istanbul cover node_modules/mocha/bin/_mocha -- --compilers js:babel-register"
+    "build": "grunt",
+    "test": "istanbul cover node_modules/mocha/bin/_mocha -- --compilers js:babel-register"
   },
   "author": "Victor Kuschenko",
   "license": "MIT",
@@ -15,7 +14,7 @@
     "url": "https://github.com/vkuschenko/react-ui-treeview.git"
   },
   "bugs": "https://github.com/vkuschenko/react-ui-treeview/issues",
-  "dependencies": {
+  "peerDependencies": {
     "react": "^15.2.1"
   },
   "devDependencies": {
@@ -26,8 +25,14 @@
     "browserify": "^13.0.1",
     "chai": "^3.5.0",
     "enzyme": "^2.4.1",
+    "grunt": "^1.0.1",
+    "grunt-browserify": "^5.0.0",
+    "grunt-contrib-clean": "^1.0.0",
+    "grunt-contrib-uglify": "^2.0.0",
+    "install": "^0.8.1",
     "istanbul": "^1.1.0-alpha.1",
     "mocha": "^3.0.2",
+    "npm": "^3.10.7",
     "react-addons-test-utils": "^15.3.1",
     "react-dom": "^15.2.1",
     "sinon": "^1.17.5"

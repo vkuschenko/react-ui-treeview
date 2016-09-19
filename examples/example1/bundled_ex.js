@@ -1,7 +1,7 @@
 (function e(t,n,r){function s(o,u){if(!n[o]){if(!t[o]){var a=typeof require=="function"&&require;if(!u&&a)return a(o,!0);if(i)return i(o,!0);var f=new Error("Cannot find module '"+o+"'");throw f.code="MODULE_NOT_FOUND",f}var l=n[o]={exports:{}};t[o][0].call(l.exports,function(e){var n=t[o][1][e];return s(n?n:e)},l,l.exports,e,t,n,r)}return n[o].exports}var i=typeof require=="function"&&require;for(var o=0;o<r.length;o++)s(r[o]);return s})({1:[function(require,module,exports){
 var React = require("react");
 var ReactDOM = require("react-dom");
-var Treeview = require("../../src/treeview");
+var Treeview = require("../../src/index");
 
 var nodes = [{
   type: "list",
@@ -43,7 +43,7 @@ var buttons = [{
 
 ReactDOM.render(React.createElement(Treeview, { nodes: nodes, buttons: buttons }), document.getElementById("container"));
 
-},{"../../src/treeview":182,"react":172,"react-dom":29}],2:[function(require,module,exports){
+},{"../../src/index":180,"react":172,"react-dom":29}],2:[function(require,module,exports){
 (function (process){
 'use strict';
 
@@ -21072,6 +21072,11 @@ module.exports = {
 };
 
 },{}],180:[function(require,module,exports){
+var TreeView = require('./treeview');
+
+module.exports = TreeView;
+
+},{"./treeview":183}],181:[function(require,module,exports){
 var React = require("react");
 
 "use strict";
@@ -21096,7 +21101,7 @@ var Button = React.createClass({
 
 module.exports = Button;
 
-},{"react":172}],181:[function(require,module,exports){
+},{"react":172}],182:[function(require,module,exports){
 var React = require("react");
 var Button = require("./button");
 
@@ -21147,7 +21152,7 @@ Toolbar.contextTypes = {
 
 module.exports = Toolbar;
 
-},{"./button":180,"react":172}],182:[function(require,module,exports){
+},{"./button":181,"react":172}],183:[function(require,module,exports){
 var React = require("react");
 var Toolbar = require("./toolbar/toolbar");
 var Content = require("./content/content");
@@ -21224,7 +21229,7 @@ var Treeview = React.createClass({
 
   // Context dependent functionality
 
-  getChildContext() {
+  getChildContext: function () {
     return {
       handlerExpanderClick: this.handlerExpanderClick,
       handlerNodeClick: this.handlerNodeClick,
@@ -21244,4 +21249,4 @@ Treeview.childContextTypes = {
 
 module.exports = Treeview;
 
-},{"./content/content":173,"./default-styles":177,"./helper":178,"./helpers/input-preprocessor":179,"./toolbar/toolbar":181,"react":172}]},{},[1]);
+},{"./content/content":173,"./default-styles":177,"./helper":178,"./helpers/input-preprocessor":179,"./toolbar/toolbar":182,"react":172}]},{},[1]);
