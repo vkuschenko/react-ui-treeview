@@ -1,36 +1,38 @@
-var React = require('react');
-var expect = require('chai').expect;
-var enzyme = require('enzyme');
-var sinon = require('sinon');
+import React from 'react';
+import { expect } from 'chai';
+import { shallow } from 'enzyme';
+import sinon from 'sinon';
 
-var Expander = require('../src/content/expander');
-var styles = require('../src/default-styles').content;
+import Expander from '../src/content/expander';
+import styles from '../src/default-styles';
 
-describe('<Expander>', function() {
+const content = styles.content;
 
-  it('Closed expander should be rendered correctly.', function() {
-    var wrapper = enzyme.shallow(<Expander styles={styles} collapsed={true} id={1} />);
-    var div = wrapper.find('div');
+describe('<Expander>', () => {
+
+  it('Closed expander should be rendered correctly.', () => {
+    const wrapper = shallow(<Expander styles={content} collapsed={true} id={1} />);
+    const div = wrapper.find('div');
     expect(div).to.have.length(1);
     expect(div.hasClass('expander')).to.equal(true);
     expect(div.hasClass('collapsed')).to.equal(true);
   });
 
-  it('Opened expander should be rendered correctly.', function() {
-    var wrapper = enzyme.shallow(<Expander styles={styles} collapsed={false} id={1} />);
-    var div = wrapper.find('div');
+  it('Opened expander should be rendered correctly.', () => {
+    const wrapper = shallow(<Expander styles={content} collapsed={false} id={1} />);
+    const div = wrapper.find('div');
     expect(div).to.have.length(1);
     expect(div.hasClass('expander')).to.equal(true);
     expect(div.hasClass('opened')).to.equal(true);
   });
 
-  it('Should call `onClick` if clicked.', function() {
-    var onClick = sinon.spy();
-    var wrapper = enzyme.shallow(
-      <Expander styles={styles} collapsed={true} id={1} />,
+  it('Should call `onClick` if clicked.', () => {
+    const onClick = sinon.spy();
+    const wrapper = shallow(
+      <Expander styles={content} collapsed={true} id={1} />,
       { context: { handlerExpanderClick: onClick } }
     );
-    var div = wrapper.find('div');
+    const div = wrapper.find('div');
     div.simulate('click');
     expect(onClick.called);
     expect(onClick.calledWith(1));

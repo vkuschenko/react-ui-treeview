@@ -1,6 +1,4 @@
-var React = require("react");
-
-"use strict";
+import React from "react";
 
 /**
  * Props:
@@ -8,9 +6,9 @@ var React = require("react");
  *  root        - is root node
  *  collapsed   - is node collapsed
  */
-var Group = React.createClass({
+class Group extends React.Component {
 
-  render: function () {
+  render () {
     var groupStyles = this.props.styles.group;
     var styles = [groupStyles.group];
     this.props.root && styles.push(groupStyles.root);
@@ -23,6 +21,6 @@ var Group = React.createClass({
     );
   }
 
-});
+}
 
-module.exports = Group;
+export default Group;

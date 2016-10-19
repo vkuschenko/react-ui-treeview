@@ -1,11 +1,9 @@
-var React = require("react");
-var Button = require("./button");
+import React from "react";
+import Button from "./button";
 
-"use strict";
+class Toolbar extends React.Component {
 
-var Toolbar = React.createClass({
-
-  render: function () {
+  render () {
     var buttons = this.props.useDefaultButtons ? this.getDefaultButtons() : [];
 
     if (this.props.customButtons) {
@@ -23,28 +21,28 @@ var Toolbar = React.createClass({
         }, this)}
       </div>
     );
-  },
+  }
 
-  getDefaultButtons: function () {
+  getDefaultButtons () {
     return [
-      {value: "Collapse all", styles: this.props.styles, clickHandler: this.onCollapseAll},
-      {value: "Expand all", styles: this.props.styles, clickHandler: this.onExpandAll}
+      {value: "Collapse all", styles: this.props.styles, clickHandler: this.onCollapseAll.bind(this)},
+      {value: "Expand all", styles: this.props.styles, clickHandler: this.onExpandAll.bind(this)}
     ];
-  },
+  }
 
-  onExpandAll: function () {
+  onExpandAll () {
     this.context.handlerExpandAll();
-  },
+  }
 
-  onCollapseAll: function () {
+  onCollapseAll () {
     this.context.handlerCollapseAll();
   }
 
-});
+}
 
 Toolbar.contextTypes = {
   handlerExpandAll: React.PropTypes.func,
   handlerCollapseAll: React.PropTypes.func
 };
 
-module.exports = Toolbar;
+export default Toolbar;

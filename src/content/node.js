@@ -1,8 +1,6 @@
-var React = require("react");
-var Group = require("./group");
-var Expander = require("./expander");
-
-"use strict";
+import React from "react";
+import Group from "./group";
+import Expander from "./expander";
 
 /**
  * Props:
@@ -16,9 +14,9 @@ var Expander = require("./expander");
  *    node.selected
  *    node.name
  */
-var Node = React.createClass({
+class Node extends React.Component {
 
-  render: function () {
+  render () {
     var expandable = this.props.node.nodes && this.props.node.nodes.length > 0;
     var nodeStyles = this.props.styles.node;
 
@@ -37,9 +35,9 @@ var Node = React.createClass({
         {expandable && this.renderGroup()}
       </li>
     );
-  },
+  }
 
-  renderGroup: function () {
+  renderGroup () {
     return (
       <Group styles={this.props.styles} collapsed={this.props.node.collapsed} nodes={this.props.node.nodes}>
         {this.props.node.nodes.map(function (node) {
@@ -47,16 +45,16 @@ var Node = React.createClass({
         }, this)}
       </Group>
     );
-  },
+  }
 
-  onNodeClick: function () {
+  onNodeClick () {
     this.context.handlerNodeClick(this.props.id, this.props.node.clickHandler.bind(this));
   }
 
-});
+}
 
 Node.contextTypes = {
   handlerNodeClick: React.PropTypes.func
 };
 
-module.exports = Node;
+export default Node;

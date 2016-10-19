@@ -1,15 +1,17 @@
-var React = require('react');
-var expect = require('chai').expect;
-var enzyme = require('enzyme');
-var sinon = require('sinon');
+import React from 'react';
+import { expect } from 'chai';
+import { shallow } from 'enzyme';
+import sinon from 'sinon';
 
-var Group = require('../src/content/group');
-var styles = require('../src/default-styles').content;
+import Group from '../src/content/group';
+import styles from '../src/default-styles';
+
+const content = styles.content;
 
 describe('<Group>', function() {
 
   it('Should render collapsed group correctly.', function() {
-    var wrapper = enzyme.shallow(<Group styles={styles} collapsed={true} />);
+    var wrapper = shallow(<Group styles={content} collapsed={true} />);
     var ul = wrapper.find('ul');
     expect(ul).to.have.length(1);
     expect(ul.hasClass('group')).to.equal(true);
@@ -17,7 +19,7 @@ describe('<Group>', function() {
   });
 
   it('Should render expanded group correctly.', function() {
-    var wrapper = enzyme.shallow(<Group styles={styles} collapsed={false} />);
+    var wrapper = shallow(<Group styles={content} collapsed={false} />);
     var ul = wrapper.find('ul');
     expect(ul).to.have.length(1);
     expect(ul.hasClass('group')).to.equal(true);
@@ -25,7 +27,7 @@ describe('<Group>', function() {
   });
 
   it('Should render root collapsed group correctly.', function() {
-    var wrapper = enzyme.shallow(<Group styles={styles} collapsed={true} root={true} />);
+    var wrapper = shallow(<Group styles={content} collapsed={true} root={true} />);
     var ul = wrapper.find('ul');
     expect(ul).to.have.length(1);
     expect(ul.hasClass('group')).to.equal(true);
@@ -34,7 +36,7 @@ describe('<Group>', function() {
   });
 
   it('Should render root expanded group correctly.', function() {
-    var wrapper = enzyme.shallow(<Group styles={styles} collapsed={false} root={true} />);
+    var wrapper = shallow(<Group styles={content} collapsed={false} root={true} />);
     var ul = wrapper.find('ul');
     expect(ul).to.have.length(1);
     expect(ul.hasClass('group')).to.equal(true);
@@ -43,8 +45,8 @@ describe('<Group>', function() {
   });
 
   it('Should render any children correctly.', function() {
-    var wrapper = enzyme.shallow(
-      <Group styles={styles} collapsed={false}>
+    var wrapper = shallow(
+      <Group styles={content} collapsed={false}>
         <span>test</span>
       </Group>
     );

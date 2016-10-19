@@ -1,6 +1,4 @@
-"use strict";
-
-module.exports = {
+export default {
   treeview: "treeview",
   content: {
     content: "content",

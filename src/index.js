@@ -1,3 +1,3 @@
-var TreeView = require('./treeview');
+import TreeView from "./treeview";
 
-module.exports = TreeView;
+export default TreeView;

@@ -1,12 +1,10 @@
-var React = require("react");
-var Group = require("./group");
-var Node = require("./node");
+import React from "react";
+import Group from "./group";
+import Node from "./node";
 
-"use strict";
+class Content extends React.Component {
 
-var Content = React.createClass({
-
-  render: function () {
+  render () {
     return (
       <div className={this.props.styles.content}>
         <Group styles={this.props.styles} collapsed={false} root={true}>
@@ -17,7 +15,7 @@ var Content = React.createClass({
       </div>
     );
   }
+  
+}
 
-});
-
-module.exports = Content;
+export default Content;

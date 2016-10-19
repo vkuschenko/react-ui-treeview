@@ -1,8 +1,9 @@
-var React = require("react");
-var ReactDOM = require("react-dom");
-var Treeview = require("../src/index");
+import React from "react";
+import ReactDOM from "react-dom";
+import Treeview from "../src/index";
+import data from "./data";
 
 ReactDOM.render(
-  <Treeview nodes={nodes} buttons={buttons}/>,
+  <Treeview nodes={data.nodes} buttons={data.buttons} />,
   document.getElementById("container")
 );

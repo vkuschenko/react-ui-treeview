@@ -1,21 +1,19 @@
-var React = require("react");
+import React from "react";
 
-"use strict";
-
-var Button = React.createClass({
+class Button extends React.Component {
   
-  render: function () {
+  render () {
     return (
-      <button onClick={this.onClick} className={this.props.styles.button}>
+      <button onClick={this.onClick.bind(this)} className={this.props.styles.button}>
         {this.props.value}
       </button>
     );
-  },
+  }
 
-  onClick: function () {
+  onClick () {
     this.props.clickHandler.call(this);
   }
 
-});
+}
 
-module.exports = Button;
+export default Button;

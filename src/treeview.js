@@ -1,32 +1,24 @@
-var React = require("react");
-var Toolbar = require("./toolbar/toolbar");
-var Content = require("./content/content");
-var inputPreprocessor = require("./helpers/input-preprocessor");
-var helper = require("./helper");
-var defaultStyles = require("./default-styles");
+import React from "react";
+import Toolbar from "./toolbar/toolbar";
+import Content from"./content/content";
+import { verify } from "./helpers/input-preprocessor";
+import { findNodeById, setToAll } from "./helper";
+import defaultStyles from"./default-styles";
 
-"use strict";
+class Treeview extends React.Component{
 
-var Treeview = React.createClass({
+  constructor() {
+    super();
+    this.state = {nodes: []};
+  }
 
-  getDefaultProps: function () {
-    return {
-      styles: defaultStyles,
-      useDefaultButtons: true
-    };
-  },
-
-  getInitialState: function () {
-    return {nodes: []};
-  },
-
-  componentWillMount: function () {
+  componentWillMount () {
     this.setState({
-      nodes: inputPreprocessor.verify(this.props.nodes)
+      nodes: verify(this.props.nodes)
     });
-  },
+  }
 
-  render: function () {
+  render () {
     return (
       <div className={this.props.styles.treeview}>
         <Toolbar styles={this.props.styles.toolbar}
@@ -35,53 +27,58 @@ var Treeview = React.createClass({
         <Content styles={this.props.styles.content} nodes={this.state.nodes}/>
       </div>
     );
-  },
+  }
 
   // FUNCTIONALITY
 
-  handlerExpanderClick: function (id) {
-    var node = helper.findNodeById(this.state.nodes, id);
+  handlerExpanderClick (id) {
+    var node = findNodeById(this.state.nodes, id);
     if (node) {
       node.collapsed = !node.collapsed;
       this.setState({nodes: this.state.nodes});
     }
-  },
+  }
 
-  handlerNodeClick: function (id, customHandler) {
-    helper.setToAll(this.state.nodes, "selected", false);
-    var node = helper.findNodeById(this.state.nodes, id);
+  handlerNodeClick (id, customHandler) {
+    setToAll(this.state.nodes, "selected", false);
+    var node = findNodeById(this.state.nodes, id);
     if (node) {
       node.selected = true;
       if (customHandler && customHandler instanceof Function) {
         customHandler();
       }
     }
-  },
+  }
 
-  handlerExpandAll: function () {
+  handlerExpandAll () {
     var nodes = this.state.nodes;
-    helper.setToAll(nodes, "collapsed", false);
+    setToAll(nodes, "collapsed", false);
     this.setState(nodes);
-  },
+  }
 
-  handlerCollapseAll: function () {
+  handlerCollapseAll () {
     var nodes = this.state.nodes;
-    helper.setToAll(nodes, "collapsed", true);
+    setToAll(nodes, "collapsed", true);
     this.setState(nodes);
-  },
+  }
 
   // Context dependent functionality
 
-  getChildContext: function () {
+  getChildContext () {
     return {
-      handlerExpanderClick: this.handlerExpanderClick,
-      handlerNodeClick: this.handlerNodeClick,
-      handlerExpandAll: this.handlerExpandAll,
-      handlerCollapseAll: this.handlerCollapseAll
+      handlerExpanderClick: this.handlerExpanderClick.bind(this),
+      handlerNodeClick: this.handlerNodeClick.bind(this),
+      handlerExpandAll: this.handlerExpandAll.bind(this),
+      handlerCollapseAll: this.handlerCollapseAll.bind(this)
     };
   }
 
-});
+}
+
+Treeview.defaultProps = {
+  styles: defaultStyles,
+  useDefaultButtons: true
+};
 
 Treeview.childContextTypes = {
   handlerExpanderClick: React.PropTypes.func,
@@ -90,4 +87,4 @@ Treeview.childContextTypes = {
   handlerCollapseAll: React.PropTypes.func
 };
 
-module.exports = Treeview;
+export default Treeview;
